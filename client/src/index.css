@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+@theme {
+  /* User Theme Colors - Refined Premium Palette */
+  --color-primary: #4f46e5; /* Indigo 600 - Professional & Modern */
+  --color-primary-light: #818cf8; /* Indigo 400 */
+  --color-primary-dark: #3730a3; /* Indigo 800 */
+  
+  --color-secondary: #0ea5e9; /* Sky 500 */
+  
+  --color-success: #10b981; /* Emerald 500 */
+  --color-success-light: #34d399; 
+  --color-success-dark: #059669; /* Emerald 700 */
+  
+  --color-danger: #ef4444; /* Red 500 */
+  --color-danger-light: #f87171; 
+  --color-danger-dark: #b91c1c; /* Red 700 */
+  
+  --color-warning: #f59e0b; /* Amber 500 */
+  --color-warning-light: #fbbf24; 
+  --color-warning-dark: #d97706; /* Amber 600 */
+  
+  --color-info: #3b82f6; /* Blue 500 */
+  --color-info-dark: #2563eb; /* Blue 600 */
+  
+  /* Semantic Variables Mapped to User Theme */
+  
+  /* Light Mode - Premium Gray Palette */
+  --color-background: #f3f4f6; /* Gray-100 - Clean Professional Gray */
+  --color-surface: #ffffff;
+  --color-surface-hover: #f9fafb; /* Gray-50 */
+  
+  --color-text: #374151;       /* Gray-700 */
+  --color-text-muted: #6b7280; /* Gray-500 */
+  --color-text-heading: #111827; /* Gray-900 */
+  
+  --color-border: #e5e7eb;     /* Gray-200 */
+  --color-input-bg: #ffffff;
+  --color-input-border: #d1d5db; /* Gray-300 */ 
+  
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  
+  --shadow-soft: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 15px rgba(79, 70, 229, 0.3); /* Indigo Glow */
+}
+
+@layer base {
+  /* Dark Theme Overrides */
+  .dark {
+    --color-background: #212529; /* User --dark */
+    --color-surface: #2b3035;
+    --color-surface-hover: #343a40;
+    
+    --color-text: #f8f9fa;       /* User --light */
+    --color-text-muted: #adb5bd; 
+    --color-text-heading: #ffffff;
+    
+    --color-border: #343a40;
+    --color-input-bg: #212529;
+    --color-input-border: #495057;
+    
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  }
+
+  body {
+    @apply bg-[var(--color-background)] font-sans text-[var(--color-text)] antialiased selection:bg-primary/30 selection:text-white transition-colors duration-300;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-[var(--color-text-heading)];
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-[var(--color-surface)]/80 backdrop-blur-xl border border-[var(--color-border)];
+  }
+  
+  /* Professional Table Styles (QuickBooks-like) */
+  .table-container {
+    @apply w-full overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm;
+  }
+
+  .table-professional {
+    @apply w-full text-left text-sm border-collapse;
+  }
+
+  .table-professional thead {
+    @apply bg-[var(--color-surface-hover)] text-[var(--color-text-muted)] uppercase tracking-wider font-semibold text-xs border-b border-[var(--color-border)];
+  }
+
+  .table-professional th {
+    @apply px-6 py-4 whitespace-nowrap;
+  }
+
+  .table-professional tbody tr {
+    @apply border-b border-[var(--color-border)]/50 transition-colors duration-150 hover:bg-[var(--color-surface-hover)]/50 last:border-0;
+  }
+
+  .table-professional td {
+    @apply px-6 py-4 text-[var(--color-text)] align-middle;
+  }
+
+  /* Form Inputs Polish */
+  .input-base {
+    @apply w-full px-3 py-2 rounded-lg bg-[var(--color-input-bg)] border border-[var(--color-input-border)] text-[var(--color-text)] text-sm transition-all duration-200 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 placeholder:text-[var(--color-text-muted)] disabled:opacity-60 disabled:bg-[var(--color-surface-hover)] disabled:cursor-not-allowed shadow-sm;
+  }
+  
+  .card-base {
+    @apply bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] shadow-sm transition-all duration-300 hover:shadow-md;
+  }
+
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2.5 rounded-xl font-bold transition-all duration-300 hover:shadow-lg hover:shadow-primary/40 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border border-transparent text-sm tracking-wide;
+  }
+
+  .btn-secondary {
+    @apply bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] px-5 py-2.5 rounded-xl font-bold transition-all duration-300 hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border)] hover:text-[var(--color-text-heading)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-sm tracking-wide;
+  }
+
+  .btn-ghost {
+    @apply text-[var(--color-text-muted)] bg-transparent px-3 py-2 rounded-xl font-medium transition-all duration-200 hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-heading)] active:scale-[0.98] text-sm;
+  }
+
+  .btn-danger {
+    @apply bg-[var(--color-surface)] text-danger border border-danger/20 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 hover:bg-danger/10 hover:border-danger/40 active:scale-[0.98] text-sm tracking-wide;
+  }
+
+  .btn-success {
+    @apply bg-success text-white px-5 py-2.5 rounded-xl font-bold transition-all duration-300 hover:bg-success-light hover:shadow-lg hover:shadow-success/40 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border border-transparent text-sm tracking-wide;
+
+  }
+
+  .btn-warning {
+    @apply bg-warning text-white px-4 py-2.5 rounded-lg font-bold transition-all duration-300 hover:bg-warning-light hover:shadow-lg hover:shadow-warning/40 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border border-transparent text-sm;
+  }
+
+
+
+  .table-header {
+    @apply px-4 py-2 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider bg-[var(--color-surface-hover)] border-b border-[var(--color-border)];
+  }
+  
+  .table-cell {
+    @apply px-4 py-2 whitespace-nowrap text-xs text-[var(--color-text)] border-b border-[var(--color-border)];
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-[var(--color-border)] rounded-full hover:bg-[var(--color-text-muted)];
+  }
+
+  /* Animations */
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+
+
+  /* Slide In Right */
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(100%); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out forwards;
+  }
+
+
+  /* Print Styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    
+    .print-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      margin: 0;
+      padding: 20px;
+      background: white;
+      color: black;
+      box-shadow: none;
+      border: none;
+      z-index: 9999;
+    }
+    
+    body {
+      background: white;
+      color: black;
+    }
+  }
+}
