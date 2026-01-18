@@ -5,14 +5,11 @@ const compression = require('compression');
 const dns = require('node:dns');
 require('dotenv').config();
 
-// Fix for Node 17+ DNS resolution issues with MongoDB Atlas
 try {
     dns.setDefaultResultOrder('ipv4first');
 } catch (error) {
     console.warn('Could not set default result order for DNS:', error);
 }
-
-const serverless = require('serverless-http');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -122,17 +119,6 @@ const authRoutes = require('./routes/auth');
 const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/admin');
 
-// Middleware to ensure DB connection (Soft Fail)
-app.use((req, res, next) => {
-    if (mongoose.connection.readyState !== 1) {
-        connectDB().catch((error) => {
-            console.error('Database connection failed in middleware:', error.message);
-            req.dbConnectionError = error;
-        });
-    }
-    next();
-});
-
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', apiRoutes);
@@ -148,6 +134,15 @@ if (require.main === module) {
             console.log(`Server running on port ${PORT} (DB Disconnected)`);
         });
     });
+} else {
+    module.exports = async (req, res) => {
+        if (mongoose.connection.readyState !== 1) {
+            try {
+                await connectDB();
+            } catch (err) {
+                console.error('Handler DB connect failed:', err.message);
+            }
+        }
+        return app(req, res);
+    };
 }
-
-module.exports = serverless(app);
