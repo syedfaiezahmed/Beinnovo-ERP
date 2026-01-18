@@ -4,30 +4,43 @@ const User = require('./models/User');
 const seedAdmin = async () => {
     try {
         const email = 'admin@beinnovo.com';
-        const password = 'admin'; // Change this in production!
+        const password = 'admin';
 
-        // Check if exists
         let user = await User.findOne({ email });
-        
+
         if (user) {
-            console.log('Checking Super Admin status...');
+            let needsSave = false;
+
             if (user.role !== 'super_admin') {
                 user.role = 'super_admin';
+                needsSave = true;
+            }
+
+            if (!user.password && user.passwordHash) {
+                user.password = user.passwordHash;
+                user.passwordHash = undefined;
+                needsSave = true;
+            }
+
+            if (!user.password) {
+                user.password = password;
+                needsSave = true;
+            }
+
+            if (needsSave) {
                 await user.save();
-                console.log('User updated to Super Admin');
+                console.log('Super Admin repaired/updated successfully.');
             } else {
-                console.log('Super Admin already exists.');
+                console.log('Super Admin already exists and is valid.');
             }
         } else {
-            user = new User({
+            await User.create({
                 name: 'Beinnovo Admin',
                 email,
-                passwordHash: password, // Use new field
-                // role: 'super_admin' // Legacy string role, ignore for now or map if needed
-                // Note: Strictly we should set roleId, but since we might not have Roles seeded here, we skip strict check
+                password,
+                role: 'super_admin'
             });
-            await user.save();
-            console.log('Super Admin Created: admin@beinnovo.com / admin');
+            console.log('Super Admin created: admin@beinnovo.com / admin');
         }
     } catch (err) {
         console.error('Seed Admin Failed:', err);
@@ -35,10 +48,9 @@ const seedAdmin = async () => {
 };
 
 if (require.main === module) {
-    // Run as script
     const dotenv = require('dotenv');
     dotenv.config();
-    mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/acctsys')
+    mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/beinnovo_erp')
         .then(async () => {
             await seedAdmin();
             process.exit();

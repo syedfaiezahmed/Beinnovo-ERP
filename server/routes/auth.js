@@ -15,30 +15,51 @@ const generateToken = (id) => {
 // @desc    Seed the database with a super admin user (Temporary for initial setup)
 // @access  Public
 router.get('/seed', async (req, res) => {
-    console.log('Seed route hit!'); // Log entry
     try {
         const email = 'admin@beinnovo.com';
         const password = 'admin';
 
-        console.log('Checking if user exists...');
-        const exists = await User.findOne({ email });
-        if (exists) {
-            console.log('User already exists');
-            return res.json({ message: 'Super Admin already exists', email });
+        let user = await User.findOne({ email });
+
+        if (user) {
+            let needsSave = false;
+
+            if (user.role !== 'super_admin') {
+                user.role = 'super_admin';
+                needsSave = true;
+            }
+
+            if (!user.password && user.passwordHash) {
+                user.password = user.passwordHash;
+                user.passwordHash = undefined;
+                needsSave = true;
+            }
+
+            if (!user.password) {
+                user.password = password;
+                needsSave = true;
+            }
+
+            if (needsSave) {
+                await user.save();
+            }
+
+            return res.json({ 
+                message: 'Super Admin verified/updated', 
+                email,
+                role: user.role 
+            });
         }
 
-        console.log('Creating new user...');
-        const user = await User.create({
+        const created = await User.create({
             name: 'Beinnovo Admin',
             email,
             password,
             role: 'super_admin',
             permissions: ['*:*']
         });
-        console.log('User created successfully');
-        res.status(201).json({ message: 'Super Admin Created successfully', email, password });
+        res.status(201).json({ message: 'Super Admin created successfully', email, password });
     } catch (err) {
-        console.error('Seed route error:', err);
         res.status(500).json({ message: err.message });
     }
 });
