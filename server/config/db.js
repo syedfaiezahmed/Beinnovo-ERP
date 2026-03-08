@@ -24,7 +24,7 @@ const connectDB = async () => {
              console.log('⚠️ using default local URI');
              process.env.MONGODB_URI = 'mongodb://127.0.0.1:27017/beinnovo_erp';
         } else {
-             throw new Error('MONGODB_URI environment variable is not defined');
+             throw new Error('MONGODB_URI environment variable is not defined. Please check your deployment settings.');
         }
     }
 

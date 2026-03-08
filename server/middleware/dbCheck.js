@@ -23,7 +23,8 @@ const dbCheck = async (req, res, next) => {
         // This prevents the "buffering timed out" error from hanging the request for 10s
         return res.status(503).json({ 
             message: 'Database connection is currently unavailable. Please try again later.',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+            details: 'Ensure MONGODB_URI is correctly set in your environment variables.'
         });
     }
 };
