@@ -6,6 +6,7 @@ const warehouseSchema = new mongoose.Schema({
     location: String,
     contactPerson: String,
     contactNumber: String,
+    isActive: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }
 });
 

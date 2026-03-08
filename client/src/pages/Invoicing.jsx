@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { 
   Plus as LuPlus, 
   User as LuUser, 
+  Store as LuStore,
   Printer as LuPrinter, 
   Download as LuDownload, 
   FileText as LuFileText, 
@@ -31,6 +32,7 @@ const Invoicing = () => {
   const [products, setProducts] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // AI State
@@ -121,6 +123,7 @@ const Invoicing = () => {
     { id: 1, product: '', description: '', quantity: 1, price: 0 }
   ]);
   const [selectedCustomer, setSelectedCustomer] = useState('');
+  const [selectedWarehouse, setSelectedWarehouse] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);
   const [currentInvoiceId, setCurrentInvoiceId] = useState('');
@@ -212,6 +215,7 @@ const Invoicing = () => {
     const payload = {
       invoiceNumber: currentInvoiceId,
       customer: selectedCustomer, // ObjectId
+      warehouseId: selectedWarehouse,
       date: invoiceDate,
       dueDate: dueDate,
       items: invoiceItems.map(item => ({

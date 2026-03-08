@@ -59,7 +59,7 @@ Based on the available transaction data, the system has generated a preliminary 
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         const result = await model.generateContent(prompt);
         return result.response.text();
     } catch (error) {
@@ -285,28 +285,7 @@ const getDefaultPermissionsForBusinessRole = (businessRole) => {
 };
 
 const appendRoleControlSummary = (message, user, module, permissionGranted) => {
-    const base = message || '';
-    if (!user) return base;
-    const namePart = user.name ? `${user.name} (${user._id})` : String(user._id || 'Unknown');
-    const roleLabel =
-        user.businessRole ||
-        (user.role === 'super_admin'
-            ? 'Super Admin'
-            : user.role === 'admin'
-            ? 'Organization Admin'
-            : 'User');
-    const moduleStatus = permissionGranted ? 'Allowed' : 'Blocked';
-    const permStatus = permissionGranted ? 'Passed' : 'Failed';
-    const block =
-        `Action Executed Successfully.\n\n` +
-        `• User: ${namePart}\n` +
-        `• Role: ${roleLabel}\n` +
-        `• Module Access: ${moduleStatus}\n` +
-        `• Permission Check: ${permStatus}\n` +
-        `• Action Mode: Role-Based Control`;
-    if (!base) return block;
-    if (base.includes('Action Executed Successfully.')) return base;
-    return `${base}\n\n${block}`;
+    return message || '';
 };
 
 // Middleware to ensure tenant exists for every request
@@ -3141,6 +3120,20 @@ router.post('/invoices', async (req, res) => {
                                 }
                             }
                             
+                            // Update Warehouse Specific Stock
+                            if (warehouseId) {
+                                const stockLoc = prod.stockLocations.find(l => l.warehouse.toString() === warehouseId.toString());
+                                if (stockLoc) {
+                                    stockLoc.quantity = (stockLoc.quantity || 0) - qtyToSell;
+                                } else {
+                                    // If not found, add negative stock (allow overdraft for now or handle error)
+                                    prod.stockLocations.push({
+                                        warehouse: warehouseId,
+                                        quantity: -qtyToSell
+                                    });
+                                }
+                            }
+                            
                             await prod.save();
 
                             // COGS Accounts
@@ -3321,6 +3314,13 @@ router.post('/bills', async (req, res) => {
 
             // 3. Debit Expenses / Assets and Update Inventory
             const debitMap = {}; 
+            
+            // Determine Warehouse
+            let warehouseId = req.body.warehouseId;
+            if (!warehouseId) {
+                const defaultWarehouse = await Warehouse.findOne({ tenantId: req.user.tenantId, isActive: true });
+                if (defaultWarehouse) warehouseId = defaultWarehouse._id;
+            }
 
             for (const item of savedBill.items) {
                 let debitAccount = item.accountCode;
@@ -3349,8 +3349,22 @@ router.post('/bills', async (req, res) => {
 
                             prod.quantityOnHand = (prod.quantityOnHand || 0) + item.quantity;
 
+                            // Update Warehouse Specific Stock
+                            if (warehouseId) {
+                                const stockLoc = prod.stockLocations.find(l => l.warehouse.toString() === warehouseId.toString());
+                                if (stockLoc) {
+                                    stockLoc.quantity = (stockLoc.quantity || 0) + item.quantity;
+                                } else {
+                                    prod.stockLocations.push({
+                                        warehouse: warehouseId,
+                                        quantity: item.quantity
+                                    });
+                                }
+                            }
+
                             prod.batches.push({
                                 batchId: `PUR-${savedBill.billNumber}`,
+                                warehouse: warehouseId, // Link batch to warehouse
                                 date: savedBill.date,
                                 quantity: item.quantity,
                                 unitCost: item.unitPrice,

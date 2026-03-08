@@ -21,7 +21,7 @@ const run = async () => {
        // There isn't a direct "listModels" helper exposed easily in the main class in some versions, 
        // but we can try a basic generation to a known stable model.
        
-       const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro', 'gemini-1.0-pro'];
+       const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'models/gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.5-pro-latest'];
        
        for (const modelName of modelsToTry) {
            console.log(`Testing ${modelName}...`);

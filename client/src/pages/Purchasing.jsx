@@ -32,12 +32,14 @@ const Purchasing = () => {
   const [products, setProducts] = useState([]);
   const [expenseAccounts, setExpenseAccounts] = useState([]);
   const [bills, setBills] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
 
   // State for new bill form
   const [billItems, setBillItems] = useState([
     { id: 1, type: 'product', itemId: '', description: '', quantity: 1, price: 0 }
   ]);
   const [selectedVendor, setSelectedVendor] = useState('');
+  const [selectedWarehouse, setSelectedWarehouse] = useState('');
   const [billNumber, setBillNumber] = useState('');
   const [billDate, setBillDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);
@@ -209,6 +211,7 @@ const Purchasing = () => {
       const newBill = {
           billNumber: billNumber,
           vendor: selectedVendor,
+          warehouseId: selectedWarehouse,
           date: billDate,
           dueDate: dueDate,
           items: itemsPayload,
