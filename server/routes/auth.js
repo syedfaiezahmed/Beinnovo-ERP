@@ -156,6 +156,30 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
+    // Handle Offline Mode (DB Disconnected)
+    if (req.isOffline) {
+        console.log('⚠️ Handling Offline Login Attempt for:', email);
+        
+        // Allow hardcoded admin login for emergency/demo access
+        if (email === 'admin@beinnovo.com' && (password === 'admin' || password === '123456')) {
+            return res.json({
+                _id: 'offline_admin_id',
+                name: 'Offline Admin',
+                email: 'admin@beinnovo.com',
+                role: 'super_admin',
+                tenantName: 'Beinnovo Admin (Offline Mode)',
+                tenant: { name: 'Beinnovo Admin (Offline Mode)' },
+                token: generateToken('offline_admin_id'),
+                isOffline: true
+            });
+        }
+        
+        return res.status(503).json({ 
+            message: 'System is offline. Only admin login is available for recovery.',
+            details: 'Database connection failed.'
+        });
+    }
+
     try {
         const user = await User.findOne({ email });
 

@@ -19,8 +19,16 @@ const dbCheck = async (req, res, next) => {
     } catch (error) {
         console.error('Middleware: DB Connection Failed:', error.message);
         
-        // Return 503 Service Unavailable with a helpful message
-        // This prevents the "buffering timed out" error from hanging the request for 10s
+        // If it's a login request, we allow it to proceed with an offline flag
+        // This enables "Offline/Demo Mode" login even if DB is down
+        if (req.path === '/api/auth/login' || req.path === '/login') {
+            console.log('⚠️ Enabling Offline Mode for Login Request');
+            req.isOffline = true;
+            req.dbError = error;
+            return next();
+        }
+
+        // For other requests, return 503 Service Unavailable
         return res.status(503).json({ 
             message: 'Database connection is currently unavailable. Please try again later.',
             error: process.env.NODE_ENV === 'development' ? error.message : undefined,
