@@ -28,7 +28,7 @@ const callGemini = async (fullPrompt, userPromptOnly) => {
     if (!genAI) throw new Error('Gemini API Key is missing');
     
     try {
-        const modelName = 'gemini-1.5-flash'; 
+        const modelName = 'gemini-pro'; 
         const model = genAI.getGenerativeModel({
             model: modelName,
             generationConfig: {
