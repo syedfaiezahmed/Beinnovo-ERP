@@ -19,9 +19,8 @@ const dbCheck = async (req, res, next) => {
     } catch (error) {
         console.error('Middleware: DB Connection Failed:', error.message);
         
-        // If it's a login request, we allow it to proceed with an offline flag
-        // This enables "Offline/Demo Mode" login even if DB is down
-        if (req.path === '/api/auth/login' || req.path === '/login') {
+        // If it's a login request, allow Offline Mode ONLY in non-production
+        if ((req.path === '/api/auth/login' || req.path === '/login') && process.env.NODE_ENV !== 'production') {
             console.log('⚠️ Enabling Offline Mode for Login Request');
             req.isOffline = true;
             req.dbError = error;

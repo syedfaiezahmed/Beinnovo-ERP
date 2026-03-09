@@ -156,8 +156,8 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Handle Offline Mode (DB Disconnected)
-    if (req.isOffline) {
+    // Handle Offline Mode (DB Disconnected) - Only allowed in non-production
+    if (req.isOffline && process.env.NODE_ENV !== 'production') {
         console.log('⚠️ Handling Offline Login Attempt for:', email);
         
         // Allow hardcoded admin login for emergency/demo access
@@ -174,10 +174,7 @@ router.post('/login', async (req, res) => {
             });
         }
         
-        return res.status(503).json({ 
-            message: 'System is offline. Only admin login is available for recovery.',
-            details: 'Database connection failed.'
-        });
+        return res.status(503).json({ message: 'System is offline. Only admin login is available for recovery.' });
     }
 
     try {

@@ -12,15 +12,10 @@ const connectDB = async () => {
     // 1. Get URI
     let MONGODB_URI = process.env.MONGODB_URI;
 
-    // 2. Fallback for Local Dev (if not set)
+    // 2. Require URI in all environments (no local fallback)
     if (!MONGODB_URI) {
-        if (process.env.NODE_ENV !== 'production') {
-            console.log('⚠️ MONGODB_URI missing. Using Local Fallback.');
-            MONGODB_URI = 'mongodb://127.0.0.1:27017/beinnovo_erp';
-        } else {
-            console.error('❌ FATAL: MONGODB_URI is missing in production environment!');
-            throw new Error('MONGODB_URI environment variable is not defined.');
-        }
+        console.error('❌ FATAL: MONGODB_URI is missing!');
+        throw new Error('MONGODB_URI environment variable is not defined.');
     }
 
     // 3. Return existing connection if ready
