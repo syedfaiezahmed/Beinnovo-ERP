@@ -30,8 +30,10 @@ const dbCheck = async (req, res, next) => {
         // For other requests, return 503 Service Unavailable
         return res.status(503).json({ 
             message: 'Database connection is currently unavailable. Please try again later.',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined,
-            details: 'Ensure MONGODB_URI is correctly set in your environment variables.'
+            // TEMPORARY DEBUGGING: Always show error message to help user diagnose Vercel issue
+            error: error.message, 
+            details: 'Ensure MONGODB_URI is correctly set in your environment variables. Check Vercel Logs for more info.',
+            env_check: process.env.MONGODB_URI ? 'URI is Set' : 'URI is Missing'
         });
     }
 };
