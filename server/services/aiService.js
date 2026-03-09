@@ -28,7 +28,8 @@ const callGemini = async (fullPrompt, userPromptOnly) => {
     if (!genAI) throw new Error('Gemini API Key is missing');
     
     try {
-        const modelName = 'gemini-pro'; 
+        // Use a supported model from the available list
+        const modelName = 'gemini-2.0-flash'; 
         const model = genAI.getGenerativeModel({
             model: modelName,
             generationConfig: {
@@ -1137,7 +1138,7 @@ const processUserRequest = async (userPrompt, context) => {
 
     const accountHints = accounts.map(a => `${a.code}:${a.name} (${a.type})`).join('\n') || "(No accounts available)";
     const partnerHints = partners.map(p => `${p.name} (${p.type})`).join(', ') || "(No partners available)";
-    const productHints = products.map(p => `${p.name} ($${p.price})`).join(', ') || "(No products available)";
+    const productHints = products.map(p => `${p.name} (SKU:${p.sku || 'N/A'}, Price:$${p.price}, Stock:${p.quantityOnHand})`).join(', ') || "(No products available)";
     const employeeHints = employees.map(e => `${e.firstName} ${e.lastName} (${e.department})`).join(', ') || "(No employees available)";
     const leadHints = leads.map(l => `${l.name} (${l.status})`).join(', ') || "(No leads available)";
 
